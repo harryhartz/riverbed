@@ -24,11 +24,16 @@ Rules, non-negotiable:
 Output format: respond with a JSON object only, no other text:
 {
   "reflection": "the reflection text, 2-4 sentences, in second person, ending with a genuine question where appropriate",
-  "cited_entry_ids": ["id1", "id2", ...]
+  "cited_entry_ids": ["id1", "id2", ...],
+  "connections": [
+    { "entry_id_a": "id1", "entry_id_b": "id2", "relation": "a few words describing the link, e.g. 'echo: switzerland plan' or 'contradiction' or 'theme: family'" }
+  ]
 }
 
+"connections" should list every pair of entries from cited_entry_ids that are directly related to each other by the pattern you found — usually this is just the entries you cited, paired up. Keep "relation" short (a few words), lowercase, and specific enough that seeing it alone would remind the person what the link is. If cited_entry_ids has only one entry, connections can be an empty array.
+
 If you find no pattern worth surfacing in this window, respond with:
-{ "reflection": null, "cited_entry_ids": [] }`;
+{ "reflection": null, "cited_entry_ids": [], "connections": [] }`;
 
 function buildWindowPrompt(entries) {
   const formatted = entries
@@ -105,6 +110,32 @@ export async function generateReflection({ trigger = 'manual' } = {}) {
     ],
   });
 
+  // Save structured connections between entries, feeding the
+  // Constellation view. Validated against the actual entry set so a
+  // hallucinated id or a stray self-link can't get written.
+  const validIds = new Set(entries.map(e => e.id));
+  const connections = Array.isArray(parsed.connections) ? parsed.connections : [];
+  let savedLinks = 0;
+
+  for (const conn of connections) {
+    const { entry_id_a, entry_id_b, relation } = conn || {};
+    if (
+      !entry_id_a ||
+      !entry_id_b ||
+      entry_id_a === entry_id_b ||
+      !validIds.has(entry_id_a) ||
+      !validIds.has(entry_id_b) ||
+      !relation
+    ) {
+      continue;
+    }
+    await db.execute({
+      sql: `INSERT INTO entry_links (id, entry_id_a, entry_id_b, relation, created_at) VALUES (?, ?, ?, ?, ?)`,
+      args: [nanoid(), entry_id_a, entry_id_b, String(relation).slice(0, 80), now],
+    });
+    savedLinks++;
+  }
+
   return {
     skipped: false,
     reflection: {
@@ -114,6 +145,7 @@ export async function generateReflection({ trigger = 'manual' } = {}) {
       trigger,
       created_at: now,
     },
+    links_created: savedLinks,
   };
 }
 

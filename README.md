@@ -105,9 +105,10 @@ and icons for this are already set up in `client/public/`).
 - Cloudinary upload/delete was written and reviewed carefully but not
   tested against a real Cloudinary account — test the "+ photo" flow
   once you've set your environment variables.
-- Auto-inferred tags, semantic (embedding-based) search, and populating
-  `entry_links` automatically from reflections are not built yet — the
-  reflection engine currently generates prose reflections, not
-  structured links between specific entries. This would be a natural
-  next step if the connection features (Constellation, the Entries
-  page's connection markers) feel worth investing in further.
+- Auto-inferred tags and semantic (embedding-based) search are not
+  built yet. The reflection engine now generates both a prose
+  reflection AND structured connections between specific entries
+  (saved to `entry_links`), which is what feeds the Constellation
+  view — this was verified with a mocked LLM response, including
+  confirming that invalid/hallucinated entry ids and self-links get
+  silently dropped rather than corrupting the graph.
