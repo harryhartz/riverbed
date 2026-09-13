@@ -1,0 +1,52 @@
+.capture textarea {
+  width: 100%;
+  min-height: 60vh;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.capture textarea::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.capture-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.hint {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.save-btn {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 9px 18px;
+  border-radius: var(--radius);
+  transition: background 0.15s ease;
+  font-weight: 500;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #d8b87e;
+}
+
+.save-btn:disabled {
+  background: var(--bg-panel-raised);
+  color: var(--muted);
+  cursor: default;
+}

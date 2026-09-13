@@ -1,0 +1,74 @@
+:root {
+  /* Dark, warm, tactile — a lamplit notebook at night, not a SaaS
+     dashboard. Amber spent in exactly one place: the reflect action
+     and active nav state. Everything else stays quiet. */
+  --ink: #e8dfcc;
+  --ink-dim: #b9b09a;
+  --bg: #15171a;
+  --bg-panel: #1e211f;
+  --bg-panel-raised: #262922;
+  --line: #33362f;
+  --accent: #c9a66b;
+  --accent-dim: #8a7350;
+  --muted: #7c7768;
+  --danger: #c1584c;
+  --danger-soft: #3a2320;
+
+  --serif: 'Crimson Pro', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius: 4px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: var(--bg);
+}
+
+button {
+  font-family: var(--sans);
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+/* Visible keyboard focus, everywhere, no exceptions */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+textarea,
+input,
+select {
+  font-family: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

@@ -1,0 +1,132 @@
+.constellation-page .lede {
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--ink-dim);
+  margin: 0 0 24px;
+}
+
+.empty-state {
+  padding: 32px 0;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+
+.constellation-wrap {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: radial-gradient(ellipse at center, var(--bg-panel) 0%, var(--bg) 80%);
+  overflow: hidden;
+}
+
+.constellation-svg {
+  display: block;
+}
+
+.constellation-edge {
+  stroke: var(--accent-dim);
+  stroke-width: 1;
+  opacity: 0.55;
+  transition: stroke 0.2s ease, opacity 0.2s ease;
+}
+
+.constellation-edge.active {
+  stroke: var(--accent);
+  opacity: 0.9;
+  stroke-width: 1.4;
+}
+
+.constellation-node {
+  cursor: pointer;
+}
+
+.node-dot {
+  fill: var(--accent-dim);
+  stroke: var(--accent);
+  stroke-width: 1;
+  transition: r 0.15s ease, fill 0.15s ease;
+}
+
+.constellation-node:hover .node-dot {
+  fill: var(--accent);
+}
+
+.node-dot.selected {
+  fill: var(--accent);
+  stroke: var(--ink);
+}
+
+.selected-panel {
+  margin-top: 20px;
+  padding: 18px 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius);
+}
+
+.selected-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.selected-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0 0 10px;
+  white-space: pre-wrap;
+}
+
+.selected-relations {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+.constellation-fallback {
+  margin-top: 16px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+
+.constellation-fallback summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.constellation-fallback summary:hover {
+  color: var(--ink);
+}
+
+.constellation-fallback ul {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.constellation-fallback li {
+  padding: 6px 0;
+}
+
+.constellation-fallback button {
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.connection-relation-inline {
+  color: var(--accent);
+}
