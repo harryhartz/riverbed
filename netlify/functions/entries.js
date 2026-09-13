@@ -10,11 +10,11 @@ async function ensureMigrated() {
   }
 }
 
-const json = (statusCode, body) => ({
-  statusCode,
-  headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-  body: JSON.stringify(body),
-});
+const json = (statusCode, body) =>
+  new Response(JSON.stringify(body), {
+    status: statusCode,
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+  });
 
 export default async (req, context) => {
   await ensureMigrated();
@@ -238,15 +238,14 @@ async function exportAll() {
     entry_links: links.rows,
   };
 
-  return {
-    statusCode: 200,
+  return new Response(JSON.stringify(exportData), {
+    status: 200,
     headers: {
       'Content-Type': 'application/json',
       'Content-Disposition': 'attachment; filename="riverbed-export.json"',
       'Access-Control-Allow-Origin': '*',
     },
-    body: JSON.stringify(exportData),
-  };
+  });
 }
 
 export const config = {

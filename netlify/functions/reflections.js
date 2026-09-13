@@ -9,11 +9,11 @@ async function ensureMigrated() {
   }
 }
 
-const json = (statusCode, body) => ({
-  statusCode,
-  headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-  body: JSON.stringify(body),
-});
+const json = (statusCode, body) =>
+  new Response(JSON.stringify(body), {
+    status: statusCode,
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+  });
 
 export default async (req, context) => {
   await ensureMigrated();
