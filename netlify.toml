@@ -1,11 +1,12 @@
 [build]
-  command = "cd client && npm install && npm run build"
+  command = "cd client && npm install && npm run build && cd ../netlify/functions && npm install"
   publish = "client/dist"
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["@libsql/client", "libsql"]
+  included_files = ["netlify/functions/node_modules/**"]
 
 [dev]
   command = "cd client && npm run dev"
