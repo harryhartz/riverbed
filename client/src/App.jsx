@@ -2,6 +2,7 @@ import { Routes, Route, NavLink } from 'react-router-dom';
 import Capture from './components/Capture.jsx';
 import Timeline from './components/Timeline.jsx';
 import Reflections from './components/Reflections.jsx';
+import Constellation from './components/Constellation.jsx';
 import Ask from './components/Ask.jsx';
 import SettingsPage from './components/SettingsPage.jsx';
 import './App.css';
@@ -17,6 +18,9 @@ export default function App() {
           </NavLink>
           <NavLink to="/entries" className={navClass}>
             Entries
+          </NavLink>
+          <NavLink to="/constellation" className={navClass}>
+            Constellation
           </NavLink>
           <NavLink to="/reflections" className={navClass}>
             Reflections
@@ -34,6 +38,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Capture />} />
           <Route path="/entries" element={<Timeline />} />
+          <Route path="/constellation" element={<Constellation />} />
           <Route path="/reflections" element={<Reflections />} />
           <Route path="/ask" element={<Ask />} />
           <Route path="/settings" element={<SettingsPage />} />
@@ -46,3 +51,4 @@ export default function App() {
 function navClass({ isActive }) {
   return isActive ? 'nav-link active' : 'nav-link';
 }
+

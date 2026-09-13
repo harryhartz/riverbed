@@ -14,7 +14,8 @@ async function request(path, options = {}) {
 
 export const api = {
   // Entries
-  createEntry: body => request('/entries', { method: 'POST', body: JSON.stringify({ body }) }),
+  createEntry: (body, kind = 'text') =>
+    request('/entries', { method: 'POST', body: JSON.stringify({ body, kind }) }),
   listEntries: (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return request(`/entries${qs ? `?${qs}` : ''}`);
@@ -26,6 +27,12 @@ export const api = {
   excludeFromAI: (id, excluded) =>
     request(`/entries/${id}/exclude-from-ai`, { method: 'POST', body: JSON.stringify({ excluded }) }),
   exportAll: () => `${BASE}/entries/export/all`,
+
+  // Attachments — dataUrl is a base64 data: URL from a file input / camera
+  addAttachment: (entryId, dataUrl) =>
+    request(`/entries/${entryId}/attachments`, { method: 'POST', body: JSON.stringify({ dataUrl }) }),
+  listAttachments: entryId => request(`/entries/${entryId}/attachments`),
+  listAllLinks: () => request('/entries/links'),
 
   // Reflections
   generateReflection: () => request('/reflections/generate', { method: 'POST' }),
@@ -39,3 +46,14 @@ export const api = {
   setSetting: (key, value) => request(`/settings/${key}`, { method: 'PUT', body: JSON.stringify({ value }) }),
   aiPreview: () => request('/settings/ai-preview'),
 };
+
+/** Read a File (from an <input type="file"> or drop) as a base64 data URL. */
+export function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+

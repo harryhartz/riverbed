@@ -1,20 +1,22 @@
 :root {
-  /* Dark, warm, tactile — a lamplit notebook at night, not a SaaS
-     dashboard. Amber spent in exactly one place: the reflect action
-     and active nav state. Everything else stays quiet. */
-  --ink: #e8dfcc;
-  --ink-dim: #b9b09a;
-  --bg: #15171a;
-  --bg-panel: #1e211f;
-  --bg-panel-raised: #262922;
-  --line: #33362f;
-  --accent: #c9a66b;
-  --accent-dim: #8a7350;
-  --muted: #7c7768;
-  --danger: #c1584c;
-  --danger-soft: #3a2320;
+  /* A forest floor at night, in old-paper tones: soil-dark background,
+     bone-paper text, one living-moss green accent reserved for the
+     reflect action and the connective root-lines between entries.
+     Nothing else borrows the accent — that restraint is the point. */
+  --ink: #e4dcc5;
+  --ink-dim: #b3a98c;
+  --bg: #0e100c;
+  --bg-panel: #171913;
+  --bg-panel-raised: #20231b;
+  --line: #2c2f24;
+  --accent: #7a9b6e;
+  --accent-dim: #4c5f45;
+  --muted: #6f6a54;
+  --danger: #a8523f;
+  --danger-soft: #2c1c17;
 
-  --serif: 'Crimson Pro', Georgia, serif;
+  --display: 'Fraunces', Georgia, serif;
+  --serif: 'Spectral', Georgia, serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --radius: 4px;
@@ -37,11 +39,14 @@ body {
   color: var(--ink);
   font-family: var(--serif);
   -webkit-font-smoothing: antialiased;
+  /* Faint paper-grain noise — barely visible, just enough that the
+     dark background doesn't read as flat digital black. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 ::selection {
   background: var(--accent-dim);
-  color: var(--bg);
+  color: var(--ink);
 }
 
 button {
@@ -71,4 +76,5 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
 

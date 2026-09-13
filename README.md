@@ -1,113 +1,113 @@
 # Riverbed
 
-A private thought-journaling app. You write; on a cadence you control
-(or on demand), it re-reads a window of your entries and surfaces
+A private thought-journal. You write; on a cadence you control (or on
+demand), it quietly re-reads a window of your entries and surfaces
 patterns as gentle, specific questions — never diagnoses, never
-verdicts. Every claim it makes cites the entries it came from, so you
-can go check for yourself.
+verdicts. Every claim it makes cites the entries it came from.
 
 ## What's here
 
 ```
-server/   Express API — SQLite/Turso storage, LLM adapter, reflection engine
-client/   React + Vite frontend
+netlify/    Netlify Functions backend — this is what actually runs in production
+client/     React + Vite frontend
+server/     Old Express backend — kept for reference only, not used when deployed to Netlify
 ```
 
-## First-time setup
+## Deploying (Netlify + GitHub)
 
-### 1. Backend
+1. Push this folder to a new GitHub repository.
+2. On https://app.netlify.com, "Add new site" → "Import an existing project" → connect the GitHub repo.
+3. Netlify will read `netlify.toml` automatically (build command, publish
+   dir, and functions dir are all set there — you don't need to configure
+   these by hand).
+4. Before the first deploy, set environment variables: Site settings →
+   Environment variables → add everything from `netlify/.env.example`
+   (Turso URL/token, Gemini key, Cloudinary cloud name + preset).
+5. Deploy. Every push to the connected branch redeploys automatically.
+
+## Running it locally first (recommended before deploying)
 
 ```bash
-cd server
-npm install
-cp .env.example .env
+npm install -g netlify-cli
+cd riverbed
+cp netlify/.env.example netlify/.env    # fill in your real keys
+netlify dev
 ```
 
-Open `.env` and fill in:
+Open the URL it prints (usually http://localhost:8888). This runs the
+real functions + the real frontend together, the same shape as
+production.
 
-- `TURSO_DATABASE_URL` — for local dev, leave it as `file:./riverbed.db`.
-  When you're ready to host it (so you can journal from your phone
-  too), sign up at https://turso.tech (free tier), create a database,
-  and swap in the `libsql://...` URL + auth token it gives you. Nothing
-  else in the code changes.
-- `GEMINI_API_KEY` — get a free key at https://aistudio.google.com.
-  No credit card required for the free tier. This is what powers the
-  reflection engine and the Ask feature.
+## Environment variables you need
 
-Then:
+- **Turso** (https://turso.tech, free tier) — `TURSO_DATABASE_URL` +
+  `TURSO_AUTH_TOKEN`. Create a database, copy both from its dashboard.
+- **Gemini** (https://aistudio.google.com, free tier, no card) —
+  `GEMINI_API_KEY`. As of April 2026 the free tier is Flash-only —
+  keep `GEMINI_CHAT_MODEL` pointed at a Flash model (check
+  https://ai.google.dev/gemini-api/docs/models for the current name
+  if you get a 404).
+- **Cloudinary** (https://cloudinary.com, free tier) —
+  `CLOUDINARY_CLOUD_NAME` (from your dashboard home page) and
+  `CLOUDINARY_UPLOAD_PRESET` (create one at Settings → Upload →
+  Upload presets, **signing mode: Unsigned**). Only needed if you
+  want photo attachments / standalone image posts.
 
-```bash
-npm run migrate   # creates the schema
-npm run dev        # starts the API on :3001
-```
-
-### 2. Frontend
-
-In a second terminal:
-
-```bash
-cd client
-npm install
-npm run dev        # starts on :5173, proxies /api to :3001
-```
-
-Open http://localhost:5173. Start writing.
+Full list with comments: `netlify/.env.example`.
 
 ## Switching LLM providers
 
 Everything the app needs from a model goes through
-`server/src/llm/adapter.js`. To switch providers, change one line in
-`server/.env`:
+`netlify/lib/llm/adapter.js`. Change one variable:
 
 ```
 LLM_PROVIDER=gemini     # or: anthropic, ollama
 ```
 
-- `gemini` — free tier, 1M token context, good default (see
-  `providers/gemini.js`)
-- `anthropic` — higher quality, not free; useful for an occasional
-  high-stakes reflection pass (`providers/anthropic.js`)
-- `ollama` — fully local/offline, needs Ollama running on your machine
-  (`providers/ollama.js`)
+- `gemini` — free tier, good default
+- `anthropic` — higher quality, not free
+- `ollama` — fully local/offline, needs Ollama running
 
-Each provider file implements the same two functions (`chat`, `embed`),
-so adding a new one is a matter of writing a fourth file in the same
-shape and registering it in `adapter.js`.
+## Using it on your phone
 
-## A note on privacy
+Once deployed, visit the same Netlify URL from your phone's browser —
+it's the same app, same data. On iOS Safari or Android Chrome, use
+"Add to Home Screen" and it installs like a small app (the manifest
+and icons for this are already set up in `client/public/`).
 
-Gemini's free tier documentation states that free-tier content may be
-used to improve Google's products; the paid tier is handled
-differently. Given this app is meant to hold unfiltered private
-writing, it's worth deciding deliberately whether that trade-off is
-one you're comfortable with — the Settings page in the app always
-shows you exactly what would be sent to the model and how many entries
-are in scope, before anything is sent. If it bothers you, flipping
-`LLM_PROVIDER` to `anthropic` or `ollama` costs one line, not a
-rewrite.
+## What's built and tested
 
-## What's built vs. what's a next step
-
-**Built and working end-to-end:**
-- Frictionless capture (blank page, autosave to a local draft, no
-  required fields)
+- Frictionless capture: blank page, auto-expanding textarea (starts
+  small, grows as you write), local draft safety net, no required
+  fields
+- Photo attachment to any entry, or a standalone photo-only post —
+  same flow, photo and text are both optional
 - Entries: soft delete with undo, exclude-from-AI toggle, full JSON
-  export
-- Reflection engine: on-demand ("Reflect now" button) and a daily cron
-  that checks a configurable weekly/monthly cadence
+  export, a quiet "root-tendril" spine connecting entries chronologically
+- Reflection engine: on-demand ("Reflect now") and a daily scheduled
+  function that checks a configurable weekly/monthly cadence
+- Constellation view: a node-graph of every AI-detected connection
+  between entries, laid out with a simple force simulation, with an
+  accessible list-based fallback for keyboard/screen-reader use
 - Ask: ad-hoc questions grounded in your actual entries, with citations
 - Settings: cadence control, and a transparent preview of exactly what
-  data would be sent to the model
+  data would be sent to the model before anything is sent
+- Dark forest-floor visual design (Fraunces + Spectral fonts), PWA
+  manifest for home-screen install
 
-**Deliberately left as a next step** (the spec called these out but
-they're substantial enough to warrant their own pass once the core
-loop feels right to you):
-- Semantic (embedding-based) search, beyond the current substring
-  search — the `embeddings` table and `embed()` adapter function are
-  already there, wired for this
-- The visual "connection web" between entries — the `entry_links`
-  table exists; nothing populates or renders it yet
-- A density-over-time / theme visualization for the whole body of
-  writing
-- Auto-inferred tags (mood/topic/people) — the `tags` table supports
-  both user and AI sources; only manual tagging is wired up so far
+## Honestly, what to check yourself before relying on it
+
+- `netlify dev` was verified starting correctly and loading all
+  functions, but a full click-through wasn't possible in the build
+  sandbox (network restrictions blocked a one-time asset download
+  the Netlify CLI needs) — run through it once yourself after `netlify dev`
+  starts cleanly on your machine.
+- Cloudinary upload/delete was written and reviewed carefully but not
+  tested against a real Cloudinary account — test the "+ photo" flow
+  once you've set your environment variables.
+- Auto-inferred tags, semantic (embedding-based) search, and populating
+  `entry_links` automatically from reflections are not built yet — the
+  reflection engine currently generates prose reflections, not
+  structured links between specific entries. This would be a natural
+  next step if the connection features (Constellation, the Entries
+  page's connection markers) feel worth investing in further.
